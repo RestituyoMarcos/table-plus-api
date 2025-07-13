@@ -32,12 +32,14 @@ class Task extends Model
         'description',
         'status',
         'due_date',
+        'notification_sent_at',
         'reminder_minutes_before',
         'attachment_path',
     ];
 
     protected $casts = [
         'due_date' => 'datetime',
+        'notification_sent_at' => 'datetime',
     ];
 
     /**

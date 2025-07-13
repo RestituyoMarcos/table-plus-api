@@ -4,6 +4,9 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TaskController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Models\User;
+use App\Models\Task;
+use App\Notifications\TaskReminderNotification;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,4 +37,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('task/{task}', [TaskController::class, 'show'])->name('tasks.show');
     Route::put('task/{task}', [TaskController::class, 'update'])->name('tasks.update');
     Route::delete('task/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
+
+    Route::get('/test-notification/{task}', [TaskController::class, 'testNotification'])->name('tasks.testNotification');
+
 });

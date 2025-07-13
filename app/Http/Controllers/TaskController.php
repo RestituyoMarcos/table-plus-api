@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
+use App\Notifications\TaskReminderNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 /**
  * @OA\Info(
@@ -82,17 +85,14 @@ class TaskController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $page = $request->get('page', 1); // Obtener la página actual para la clave
+        $page = $request->get('page', 1);
 
-        // Crear una clave única para la caché que incluya al usuario y la página
         $cacheKey = "tasks.user.{$user->id}.page.{$page}";
     
         $tasks = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($request, $user) {
-            // Esta función solo se ejecuta si la caché está vacía
-    
+            
             $query = $user->tasks()->getQuery();
     
-            // Aplicar filtros
             $query->when($request->title, fn($q, $title) => $q->where('title', 'like', "%{$title}%"));
             $query->when($request->status, fn($q, $status) => $q->where('status', $status));
             $query->when($request->date, fn($q, $date) => $q->whereDate('due_date', $date));
@@ -126,18 +126,24 @@ class TaskController extends Controller
             'due_date' => 'required|date',
             'status' => 'nullable|string|in:pending,completed',
             'attachment' => 'nullable|file|mimes:pdf,jpg,png|max:5120', // Max 5MB
+            'reminder_minutes_before' => [
+                'nullable',
+                'integer',
+                Rule::in([5, 10, 15, 20, 30])
+            ], 
         ]);
 
         $taskData = $validated;
-        $taskData['user_id'] = Auth::id();
+        $user = Auth::user();
+        $taskData['user_id'] = $user->id;
 
-        // Manejo del archivo adjunto
         if ($request->hasFile('attachment')) {
             $path = $request->file('attachment')->store('attachments', 'public');
             $taskData['attachment_path'] = $path;
         }
 
         $task = Task::create($taskData);
+        // $user->notify(new TaskReminderNotification($task));
 
         return response()->json($task, 201);
     }
@@ -156,7 +162,6 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        // Asegurarse de que el usuario es propietario de la tarea
         if (Gate::denies('view', $task)) {
             return response()->json(['message' => 'Forbidden'], 403);
         }
@@ -192,11 +197,16 @@ class TaskController extends Controller
             'due_date' => 'sometimes|required|date',
             'status' => 'sometimes|required|string|in:pending,completed',
             'attachment' => 'nullable|file|mimes:pdf,jpg,png|max:5120',
+            'reminder_minutes_before' => [
+                'nullable', 'integer', Rule::in([5, 10, 15, 20, 30])
+            ],
         ]);
 
-        // Manejo del archivo adjunto
+        if ($request->has('due_date')) {
+            $validated['notification_sent_at'] = null;
+        }
+
         if ($request->hasFile('attachment')) {
-            // Eliminar el archivo antiguo si existe
             if ($task->attachment_path) {
                 Storage::disk('public')->delete($task->attachment_path);
             }
@@ -230,5 +240,28 @@ class TaskController extends Controller
         $task->delete();
 
         return response()->json(null, 204);
+    }
+
+    /**
+     * @OA\Get(
+     * path="/api/test-notification",
+     * summary="Prueba de notificación",
+     * description="Envía una notificación de prueba al primer usuario y su primera tarea.",
+     * tags={"Notifications"},
+     * security={{"bearerAuth":{}}},
+     * @OA\Response(response=200, description="Notification sent successfully"),
+     * @OA\Response(response=404, description="User or task not found")
+     * )
+     */
+    public function testNotification(Task $task){
+
+       $user = Auth::user();
+
+        if ($user && $task) {
+            $user->notify(new TaskReminderNotification($task));
+            return 'Notificación de prueba enviada.';
+        }
+
+        return 'No se encontraron usuarios o tareas para enviar la notificación.';
     }
 }
