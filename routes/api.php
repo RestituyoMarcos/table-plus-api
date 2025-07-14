@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\TaskController;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\BackupController;
+use App\Http\Controllers\Api\TaskController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\User;
@@ -30,6 +31,7 @@ Route::post('register', [AuthController::class, 'register'])->name('auth.registe
 Route::post('login', [AuthController::class, 'login'])->name('auth.login');
 
 Route::middleware('auth:sanctum')->group(function () {
+    //Authenticaction routes
     Route::post('logout', [AuthController::class, 'logout'])->name('auth.logout');
     
     Route::get('mytasks', [TaskController::class, 'index'])->name('tasks.mytasks');
@@ -39,5 +41,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('task/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
 
     Route::get('/test-notification/{task}', [TaskController::class, 'testNotification'])->name('tasks.testNotification');
+
+    //Backup routes
+    Route::get('/backup/create', [BackupController::class, 'createBackup']);
+    Route::post('/backup/restore', [BackupController::class, 'restoreBackup']);
 
 });

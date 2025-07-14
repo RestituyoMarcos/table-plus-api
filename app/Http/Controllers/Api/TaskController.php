@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Models\Task;
 use App\Notifications\TaskReminderNotification;
 use Illuminate\Http\Request;
@@ -190,7 +191,7 @@ class TaskController extends Controller
         if (Gate::denies('update', $task)) {
             return response()->json(['message' => 'Forbidden'], 403);
         }
-        
+
         $validated = $request->validate([
             'title' => 'sometimes|required|string|max:255',
             'description' => 'sometimes|required|string',
