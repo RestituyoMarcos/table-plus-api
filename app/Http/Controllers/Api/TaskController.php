@@ -88,9 +88,11 @@ class TaskController extends Controller
         $user = Auth::user();
         $page = $request->get('page', 1);
 
-        $cacheKey = "tasks.user.{$user->id}.page.{$page}";
+        $cacheKey = "tasks.user.{$user->id}.page.{$page}.title.{$request->title}.status.{$request->status}.date.{$request->date}";
+
+        $cacheseSeconds = env('CACHE_SECONDS', 10);
     
-        $tasks = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($request, $user) {
+        $tasks = Cache::remember($cacheKey, now()->addSecond($cacheseSeconds), function () use ($request, $user) {
             
             $query = $user->tasks()->getQuery();
     
