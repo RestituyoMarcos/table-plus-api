@@ -42,7 +42,6 @@ class BackupController extends Controller
             return $task;
         }, $tasks);
 
-        Log::info('Array de tareas para backup:' . json_encode($cleanedTasks));
         $xml = ArrayToXml::convert(['task' => $cleanedTasks], [
             'rootElementName' => 'tasks',
             '_attributes' => [],

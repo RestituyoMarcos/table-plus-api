@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BackupController;
+use App\Http\Controllers\Api\SoapController;
 use App\Http\Controllers\Api\TaskController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -45,5 +46,9 @@ Route::middleware('auth:sanctum')->group(function () {
     //Backup routes
     Route::get('/backup/create', [BackupController::class, 'createBackup']);
     Route::post('/backup/restore', [BackupController::class, 'restoreBackup']);
+
+    //SOAP routes
+    Route::post('/mock-soap-server', [SoapController::class, 'handleExternalRequest']);
+    Route::post('/tasks/export-soap', [SoapController::class, 'sendTasksViaSoap']);
 
 });
