@@ -100,7 +100,7 @@ class TaskController extends Controller
             $query->when($request->status, fn($q, $status) => $q->where('status', $status));
             $query->when($request->date, fn($q, $date) => $q->whereDate('due_date', $date));
     
-            return $query->orderBy('due_date', 'desc')->paginate(15);
+            return $query->orderBy('due_date', 'desc')->paginate(5);
         });
     
         return response()->json($tasks);
