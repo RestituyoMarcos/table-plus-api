@@ -98,10 +98,6 @@ php artisan serve
 ```
 La API estará disponible en http://127.0.0.1:8000.
 
-Claro, aquí tienes la plantilla completa para el archivo README.md del proyecto de backend en Laravel, en formato de código.
-
-Markdown
-
 # Table Plus - Backend API
 
 Esta es la API de backend para la aplicación de gestión de tareas "Table Plus", desarrollada con Laravel.
