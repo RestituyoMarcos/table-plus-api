@@ -212,33 +212,33 @@ Usar el Programador de Tareas de Windows
 #### Pasos:
 1. **Abrir el Programador de Tareas:**
 
-Presiona la tecla de Windows, escribe "Programador de Tareas" (Task Scheduler) y ábrelo.
+* Presiona la tecla de Windows, escribe "Programador de Tareas" (Task Scheduler) y ábrelo.
 
 2. **Crear una Tarea Básica:**
 
-En el panel derecho, haz clic en "Crear tarea básica...".
+* En el panel derecho, haz clic en "Crear tarea básica...".
 
-Dale un nombre a la tarea, como "Laravel Cron Job".
+* Dale un nombre a la tarea, como "Laravel Cron Job".
 
 3. **Configurar el Desencadenador (Trigger):**
 
-Elige la frecuencia con la que quieres que se ejecute el comando (por ejemplo, "Diariamente" o "Al iniciar el equipo").
+* Elige la frecuencia con la que quieres que se ejecute el comando (por ejemplo, "Diariamente" o "Al iniciar el equipo").
 
 **Para simular una ejecución "cada minuto", después de crear la tarea, puedes editar sus propiedades y en la pestaña "Desencadenadores", configurar que se repita cada 5 minutos (que es el intervalo más frecuente que permite la interfaz básica).**
 
 4. **Configurar la Acción:**
 
-Selecciona "Iniciar un programa".
+* Selecciona "Iniciar un programa".
 
-En el campo "Programa/script", escribe php.
+* En el campo "Programa/script", escribe php.
 
-En el campo "Agregar argumentos (opcional)", pega artisan schedule:run.
+* En el campo "Agregar argumentos (opcional)", pega artisan schedule:run.
 
-En el campo "Iniciar en (opcional)", pega la ruta a tu proyecto: C:\Users\ruta-aproyecto\table-plus-api.
+* En el campo "Iniciar en (opcional)", pega la ruta a tu proyecto: C:\Users\ruta-aproyecto\table-plus-api.
 
 5. **Finalizar:**
 
-Revisa la configuración y haz clic en "Finalizar".
+* Revisa la configuración y haz clic en "Finalizar".
 
 La tarea ahora estará programada y se ejecutará automáticamente según la frecuencia que estableciste, ejecutando el planificador de Laravel correctamente en tu entorno de Windows.
 
